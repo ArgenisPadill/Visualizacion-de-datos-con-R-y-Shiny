@@ -1,6 +1,6 @@
 ########################################################
 # Taller: Visualización de datos con R y Shiny         #
-# Docente: Argenis ALain Gustavo Padilla Cordoba       #
+# Argenis ALain Gustavo Padilla Cordoba                #
 # Sesión: 01                                           #
 # Fecha: 19/06/2023                                    #
 # Tema 1: Manipulación de bases de datos               #
