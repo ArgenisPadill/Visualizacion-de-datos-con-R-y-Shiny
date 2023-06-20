@@ -1,6 +1,6 @@
 # Visualizacion de datos con R y Shiny
 
-Base de datos del ENIGH (Encuesta Nacional de Ingresos y Gastos de los Hogares) de México 
+Para este Proyecto utilizamos la base de datos del ENIGH (Encuesta Nacional de Ingresos y Gastos de los Hogares) de México 
 https://www.inegi.org.mx/programas/enigh/nc/2020/#Microdatos
 Principales variables por hogar (concentradohogar.*)
 
