@@ -1,7 +1,7 @@
 ########################################################
 # Visualización de datos con R y Shiny                 #
 # Argenis Alain Gustavo Padilla Córdoba                #
-# Tema 1: Manipulación de bases de datos               #
+# Tema: Manipulación de bases de datos                 #
 # Elaboración propia con datos de ENIGH 2020           #
 ########################################################
 
