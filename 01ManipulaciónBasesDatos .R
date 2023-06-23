@@ -27,7 +27,7 @@ getwd()
 
 ## Importando CSV ----
 
-ENIGH <- read.csv("Bases/ENIGH/ENIGH_SciData.csv",
+ENIGH <- read.csv("Bases/ENIGH/concentradohogar.csv",
                   encoding = "UTF-8")
 
 ## Importando dta ----
