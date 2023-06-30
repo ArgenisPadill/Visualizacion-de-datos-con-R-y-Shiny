@@ -165,7 +165,7 @@ jugadores <- read.csv("Bases/Fifa23/Puntuación_jugadores.csv",
                       encoding = "UTF-8",check.names = F)
 
 
-##Datos: Tablas de poblacion por edades de 4 años
+##Datos: Tablas de poblacion por edades de 4 años----
 
 
 Total_edades_sexo <- read_excel("Bases/Censo2020/Datos_piramide_pob.xlsx",
@@ -1101,6 +1101,242 @@ ggradar(jugadores[c(5,8),], grid.min = 0, grid.max = 100,
        caption = "Elaboración propia con la base del Videjuego Fifa 23",)
     
 
+#Grafico de piramide poblacional ----
+#ordenamiento de categoria
+
+Total_edades_sexo$Edad4 <- factor(x=Total_edades_sexo$Edad4,
+                            levels = c("De 0 a 4 años",
+                                      "De 5 a 9 años",
+                                      "De 10 a 14 años",
+                                      "De 15 a 19 años",
+                                      "De 20 a 24 años",
+                                      "De 25 a 29 años",
+                                      "De 30 a 34 años",
+                                      "De 35 a 39 años",
+                                      "De 40 a 44 años",
+                                      "De 45 a 49 años",
+                                      "De 50 a 54 años",
+                                      "De 55 a 59 años",
+                                      "De 60 a 64 años",
+                                      "De 65 a 69 años",
+                                      "De 70 a 74 años",
+                                      "De 75 a 79 años",
+                                      "De 80 a 84 años",
+                                      "Mas de 84 años",
+                                      "No especificado"))
 
 
+##Estructura Basica----
+Total_edades_sexo %>% 
+  ggplot(aes(x=Edad4, y=Total, fill=Sexo))+
+  geom_col(data = subset(Total_edades_sexo,
+                         Sexo=="Hombre") %>% 
+             mutate(Total= -Total),
+           width = 0.5, fill="blue",
+           col="black")+
+  geom_col(data = subset(Total_edades_sexo,
+                         Sexo=="Mujer") %>% 
+             mutate(Total= Total),
+           width = 0.5, fill="pink",
+           col="black")+  
+  coord_flip()+
+  scale_y_continuous(breaks =  c(seq(-60000000,0, by=500000),
+                              seq(0,40000000, by= 500000 )),
+                     labels = comma( c(seq(-60000000,0, by=500000)*-1,
+                                seq(0,40000000, by= 500000 ))))
 
+
+###Con totales----
+
+Total_edades_sexo %>% 
+  ggplot(aes(x=Edad4, y=Total, fill=Sexo))+
+  geom_col(data = subset(Total_edades_sexo,
+                         Sexo=="Hombre") %>% 
+             mutate(Total= -Total),
+           width = 0.75, 
+           col="black")+
+  geom_col(data = subset(Total_edades_sexo,
+                         Sexo=="Mujer") %>% 
+             mutate(Total= Total),
+           width = 0.75, 
+           col="black")+  
+  geom_text(data = subset(Total_edades_sexo,
+                          Sexo=="Hombre"),
+            aes(y=-Total, label=comma(Total)),
+            position = position_stack(vjust = 0.5),
+            size=2.4)+
+  geom_text(data = subset(Total_edades_sexo,
+                          Sexo=="Mujer"),
+            aes(y=Total, label=comma(Total)),
+            position = position_stack(vjust = 0.5),
+            size=2.4)+
+  
+  coord_flip()+
+  scale_y_continuous(breaks =  c(seq(-60000000,0, by=500000),
+                                 seq(0,40000000, by= 500000 )),
+                     labels = comma( c(seq(-60000000,0, by=500000)*-1,
+                                       seq(0,40000000, by= 500000 ))))+
+  scale_fill_manual(values = c("#2980b9","#f5b7b1"))+
+  labs(title = "Piramide Poblacional en Mexico Para el Año 2020",
+       subtitle = "División por sexo según la edad por cada 4 años",
+       caption = "Elaboracion propa con datos del Censo 2020",
+       x="",y="")+
+  theme(legend.position = "bottom",
+        panel.background = element_blank(),
+        plot.background = element_rect(fill = "#e0eee0"), 
+        legend.background = element_rect(fill ="#e0eee0"),
+        panel.grid.major = element_line(colour = "grey"),
+        panel.grid.minor = element_blank(),
+        plot.title = ggtext::element_markdown(hjust=0.5,
+                                              size=18,
+                                              colour="black"),
+        plot.subtitle = ggtext::element_markdown(hjust=0.5,
+                                                 size=16,
+                                                 colour="black"),
+        plot.caption = element_text(hjust=0, size=14,
+                                    colour="black"),
+        text = element_text(family = "Times New Roman"),
+        axis.text = element_text(size=14, colour="black"),
+        axis.ticks = element_blank(),
+        axis.title = element_text(size=14, colour="black"),
+        legend.text = element_text(size=14, colour="black"),
+        legend.title = element_text(size=14, colour="black"),
+        axis.text.x = element_text(angle = 90, hjust = 1))
+
+###Con Porcentajes : por categoria ----
+
+Total_edades_sexo %>% 
+  ggplot(aes(x=Edad4, y=Total, fill=Sexo))+
+  geom_col(data = subset(Total_edades_sexo,
+                         Sexo=="Hombre") %>% 
+             mutate(Total= -Total),
+           width = 0.75, 
+           col="black")+
+  geom_col(data = subset(Total_edades_sexo,
+                         Sexo=="Mujer") %>% 
+             mutate(Total= Total),
+           width = 0.75, 
+           col="black")+  
+  geom_text(data = subset(Total_edades_sexo,
+                          Sexo=="Hombre"),
+            aes(y=-Total, label=Porcentaje),
+            position = position_stack(vjust = 0.5),
+            size=2.4)+
+  geom_text(data = subset(Total_edades_sexo,
+                          Sexo=="Mujer"),
+            aes(y=Total, label= Porcentaje),
+            position = position_stack(vjust = 0.5),
+            size=2.4)+
+  
+  coord_flip()+
+  scale_y_continuous(breaks =  c(seq(-60000000,0, by=500000),
+                                 seq(0,40000000, by= 500000 )),
+                     labels = comma( c(seq(-60000000,0, by=500000)*-1,
+                                       seq(0,40000000, by= 500000 ))))+
+  scale_fill_manual(values = c("#2980b9","#f5b7b1"))+
+  labs(title = "Piramide Poblacional en Mexico Para el Año 2020",
+       subtitle = "División por sexo según la edad por cada 4 años",
+       caption = "Elaboracion propa con datos del Censo 2020",
+       x="",y="")+
+  theme(legend.position = "bottom",
+        panel.background = element_blank(),
+        plot.background = element_rect(fill = "#e0eee0"), 
+        legend.background = element_rect(fill ="#e0eee0"),
+        panel.grid.major = element_line(colour = "grey"),
+        panel.grid.minor = element_blank(),
+        plot.title = ggtext::element_markdown(hjust=0.5,
+                                              size=18,
+                                              colour="black"),
+        plot.subtitle = ggtext::element_markdown(hjust=0.5,
+                                                 size=16,
+                                                 colour="black"),
+        plot.caption = element_text(hjust=0, size=14,
+                                    colour="black"),
+        text = element_text(family = "Times New Roman"),
+        axis.text = element_text(size=14, colour="black"),
+        axis.ticks = element_blank(),
+        axis.title = element_text(size=14, colour="black"),
+        legend.text = element_text(size=14, colour="black"),
+        legend.title = element_text(size=14, colour="black"),
+        axis.text.x = element_text(angle = 90, hjust = 1))
+
+##Piramide porcentaje Total----
+
+#ordenamiento de categoria
+
+Total_edades_sexo2$Edad4 <- factor(x=Total_edades_sexo2$Edad4,
+                                  levels = c("De 0 a 4 años",
+                                             "De 5 a 9 años",
+                                             "De 10 a 14 años",
+                                             "De 15 a 19 años",
+                                             "De 20 a 24 años",
+                                             "De 25 a 29 años",
+                                             "De 30 a 34 años",
+                                             "De 35 a 39 años",
+                                             "De 40 a 44 años",
+                                             "De 45 a 49 años",
+                                             "De 50 a 54 años",
+                                             "De 55 a 59 años",
+                                             "De 60 a 64 años",
+                                             "De 65 a 69 años",
+                                             "De 70 a 74 años",
+                                             "De 75 a 79 años",
+                                             "De 80 a 84 años",
+                                             "Mas de 84 años",
+                                             "No especificado"))
+
+
+Total_edades_sexo2 %>% 
+  ggplot(aes(x=Edad4, y=Total, fill=Sexo))+
+  geom_col(data = subset(Total_edades_sexo2,
+                         Sexo=="Hombre") %>% 
+             mutate(Total= -Total),
+           width = 0.75, 
+           col="black")+
+  geom_col(data = subset(Total_edades_sexo2,
+                         Sexo=="Mujer") %>% 
+             mutate(Total= Total),
+           width = 0.75, 
+           col="black")+  
+  geom_text(data = subset(Total_edades_sexo2,
+                          Sexo=="Hombre"),
+            aes(y=-Total, label=Porcentaje),
+            position = position_stack(vjust = 0.5),
+            size=2.4)+
+  geom_text(data = subset(Total_edades_sexo2,
+                          Sexo=="Mujer"),
+            aes(y=Total, label= Porcentaje),
+            position = position_stack(vjust = 0.5),
+            size=2.4)+
+  
+  coord_flip()+
+  scale_y_continuous(breaks =  c(seq(-60000000,0, by=500000),
+                                 seq(0,40000000, by= 500000 )),
+                     labels = comma( c(seq(-60000000,0, by=500000)*-1,
+                                       seq(0,40000000, by= 500000 ))))+
+  scale_fill_manual(values = c("#2980b9","#f5b7b1"))+
+  labs(title = "Piramide Poblacional en Mexico Para el Año 2020",
+       subtitle = "División por sexo según la edad por cada 4 años",
+       caption = "Elaboracion propa con datos del Censo 2020",
+       x="",y="")+
+  theme(legend.position = "bottom",
+        panel.background = element_blank(),
+        plot.background = element_rect(fill = "#e0eee0"), 
+        legend.background = element_rect(fill ="#e0eee0"),
+        panel.grid.major = element_line(colour = "grey"),
+        panel.grid.minor = element_blank(),
+        plot.title = ggtext::element_markdown(hjust=0.5,
+                                              size=18,
+                                              colour="black"),
+        plot.subtitle = ggtext::element_markdown(hjust=0.5,
+                                                 size=16,
+                                                 colour="black"),
+        plot.caption = element_text(hjust=0, size=14,
+                                    colour="black"),
+        text = element_text(family = "Times New Roman"),
+        axis.text = element_text(size=14, colour="black"),
+        axis.ticks = element_blank(),
+        axis.title = element_text(size=14, colour="black"),
+        legend.text = element_text(size=14, colour="black"),
+        legend.title = element_text(size=14, colour="black"),
+        axis.text.x = element_text(angle = 90, hjust = 1))
