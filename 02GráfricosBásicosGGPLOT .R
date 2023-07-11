@@ -1317,7 +1317,7 @@ Total_edades_sexo2 %>%
   scale_fill_manual(values = c("#2980b9","#f5b7b1"))+
   labs(title = "Piramide Poblacional en Mexico Para el Año 2020",
        subtitle = "División por sexo según la edad por cada 4 años",
-       caption = "Elaboracion propa con datos del Censo 2020",
+       caption = "Elaboracion propia con datos del Censo 2020",
        x="",y="")+
   theme(legend.position = "bottom",
         panel.background = element_blank(),
@@ -1340,3 +1340,89 @@ Total_edades_sexo2 %>%
         legend.text = element_text(size=14, colour="black"),
         legend.title = element_text(size=14, colour="black"),
         axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+
+
+#Grafico de Tarta/Circular/Pastel----
+
+Poblacion_sexo <- Total_edades_sexo %>% 
+  group_by(Sexo) %>% 
+  summarise(Total = sum(Total)) %>% 
+  ungroup() %>% 
+  mutate(Porcentaje= Total/sum(Total),
+         Etiquetas = paste0(round(Porcentaje*100,2),"%"))
+
+##Grafico base----
+
+Poblacion_sexo %>% 
+  ggplot(aes(x="", y=Porcentaje, fill=Sexo))+
+  geom_col()+
+  coord_polar(theta = "y")
+
+
+##Etiquetas dentro del Circulo----
+
+###Como Texto----
+
+Poblacion_sexo %>% 
+  ggplot(aes(x="", y=Porcentaje, fill=Sexo))+
+  geom_col()+
+  geom_text(aes(label=Etiquetas),
+           position = position_stack(vjust = 0.5) )+
+  coord_polar(theta = "y")
+
+###Como Etiqueta----
+
+Poblacion_sexo %>% 
+  ggplot(aes(x="", y=Porcentaje, fill=Sexo))+
+  geom_col()+
+  geom_label(aes(label=Etiquetas),
+            position = position_stack(vjust = 0.5) )+
+  coord_polar(theta = "y")
+
+###Presentacion Final----
+
+p4=Poblacion_sexo %>% 
+  ggplot(aes(x="", y=Porcentaje, fill=Sexo))+
+  geom_col(color="black")+
+  geom_text(aes(label=Etiquetas),
+             position = position_stack(vjust = 0.5) )+
+  coord_polar(theta = "y")+
+  
+scale_fill_manual(values = c("#2980b9","#f5b7b1"))+
+  labs(title = "Porcentaje Poblacional en Mexico Para el Año 2020",
+       subtitle = "División Porcentual",
+       caption = "Elaboracion propia con datos del CENSO 2020",
+       x="",y="")+
+  theme(legend.position = "bottom",
+        panel.background = element_blank(),
+       # plot.background = element_rect(fill = "#e0eee0"), 
+       #legend.background = element_rect(fill ="#e0eee0"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.title = ggtext::element_markdown(hjust=0.5,
+                                              size=18,
+                                              colour="black"),
+        plot.subtitle = ggtext::element_markdown(hjust=0.5,
+                                                 size=16,
+                                                 colour="black"),
+        plot.caption = element_text(hjust=0, size=14,
+                                    colour="black"),
+        text = element_text(family = "Times New Roman"),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_text(size=14, colour="black"),
+        legend.text = element_text(size=14, colour="black"),
+        legend.title = element_text(size=14, colour="blac k"))
+
+#### Guardando grafico de pastel----
+ggsave(p4,
+       filename =paste0("Gráficos/","Proyecto4.png"),
+       height = 6,
+       width = 15,
+       units = "in",
+       dpi = 700)
+
+
+
