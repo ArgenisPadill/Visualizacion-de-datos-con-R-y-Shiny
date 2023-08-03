@@ -1,7 +1,7 @@
 ########################################################
 # Visualización de datos con R y Shiny                 #
 # Argenis Alain Gustavo Padilla Córdoba                #
-# Tema: Manipulación de bases de datos                 #
+# Tema 1: Manipulación de bases de datos               #
 # Elaboración propia con datos de ENIGH 2020           #
 ########################################################
 
@@ -438,7 +438,7 @@ Viv_n_pob[-33,] %>%
   geom_col()
 
 
-ENIGH %>% 
+ENIGH %>%                                                                                                              
   group_by(NOM_ENT) %>% 
   count() %>% 
   ungroup() %>% 

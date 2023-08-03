@@ -18,13 +18,15 @@ library(scales)
 library(data.table)
 library(devtools)
 library(modeest)
- 
+library(ggplot2)
+library(GGally) 
 # Importar datos -----
 
 ## Datos para gráfico de barras ----
 
 ENIGH <- read.csv("Bases/ENIGH/ENIGH_AAGPC.csv")
 
+iris <- iris
 ##Histograma base   deaucero con la regla de Sturges ----
 
 
@@ -224,4 +226,311 @@ ENIGH %>%
         legend.title = element_text(size=14, colour="blac k"),
         legend.key = element_rect(fill = "#e0eee0"),
         axis.title.x = element_text(size = 16))
+
+#Histograma con Gráfico de densidad -----
+
+##Grafico Base ----
+
+ENIGH %>%
+  ggplot(aes(x=edad_jefe))+
+  geom_histogram(aes(y=..density..))+
+  geom_density()
+
+ENIGH %>%
+  ggplot(aes(x=edad_jefe))+
+  geom_histogram(aes(y= after_stat(density)))+
+  geom_density()
+
+
+
+##Ajuste del grafico ----
+###Retomando el Data.frame de Estadisticos_educajefe
+estadisticos_educajefe <- estadisticos_educajefe %>% 
+  mutate(Etiquetas = paste(Estadisticos, ":","", round(Resultados,2)))
+
+
+ENIGH %>%
+  ggplot(aes(x=edad_jefe))+
+  geom_histogram(aes(y= after_stat(density)),
+                 breaks= pretty(range(ENIGH$edad_jefe),
+                                n = nclass.Sturges(ENIGH$edad_jefe),
+                                min.n = 1),
+                 color="black", fill="steelblue")+
+                 
+               
+  geom_density(color="darkred",
+               # fill="darkgreen",Se omite el rellenos de densidad por que no es estetico
+               alpha=0.25,
+               linetype="solid",
+               size=1)+ #dashed es punteado , solid lineas solidas+
+  
+  geom_vline(data = estadisticos_educajefe,
+             aes(xintercept= Resultados,
+                 linetype=Etiquetas,
+                 color=Etiquetas))  +
+  scale_x_continuous(breaks= pretty(range(ENIGH$edad_jefe),
+                                    n = nclass.Sturges(ENIGH$edad_jefe),
+                                    min.n = 1)) +
+  scale_color_manual(values = c("chocolate","darkorchid4","gold4"))+
+  labs(title = "Histograma y densidad  de la edad del Jefe de familia",
+       subtitle = "Intervalos Construidos por la regla de STURGES ",
+       caption = "Elaboracion propia con datos del ENIGH 2020",
+       x="Intervalos de Edad",y="Densidad / Probabilidad",
+       color="" , linetype="")+
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), 
+        plot.background = element_rect(fill = "#e0eee0"), 
+        legend.background = element_rect(fill ="#e0eee0"),
+        panel.grid.major = element_line(color="grey"),
+        panel.grid.minor = element_blank(),
+        plot.title = ggtext::element_markdown(hjust=0.5,
+                                              size=18,
+                                              colour="black"),
+        plot.subtitle = ggtext::element_markdown(hjust=0.5,
+                                                 size=16,
+                                                 colour="black"),
+        plot.caption = element_text(hjust=0, size=14,
+                                    colour="black"),
+        text = element_text(family = "Times New Roman"),
+        axis.text = element_text(size=14, colour="black"),
+        axis.ticks = element_blank(),
+        axis.title = element_text(size=14, colour="black"),
+        legend.text = element_text(size=14, colour="black"),
+        legend.title = element_text(size=14, colour="blac k"),
+        legend.key = element_rect(fill = "#e0eee0"),
+        axis.title.x = element_text(size = 16))
+
+ 
+
+ 
+
+
+# grafico de caja y bigotes ----
+## grafico base----
+ENIGH %>% 
+  ggplot(aes(x="", y=edad_jefe))+
+  stat_boxplot(geom = "errorbar",
+               width=0.15,
+               color="black")+
+  geom_boxplot(fill="steelblue",
+               alpha=0.5,
+               color="black",
+               outlier.colour = "red")
+
+##Grafico final----
+
+ENIGH %>% 
+  ggplot(aes(x="", y=edad_jefe))+
+  stat_boxplot(geom = "errorbar",
+               width=0.15, #tamaño bigotes
+               color="black")+
+  geom_boxplot(fill="steelblue",
+               alpha=0.5,
+               color="black",
+               outlier.colour = "red",
+               width= 0.5)+ #tamaño de la caja
+  stat_summary(fun = mean , geom = "point",
+               shape=20 , size=3, color="red",fill="red")+#para ver media
+  scale_y_continuous(breaks=seq(min(ENIGH$edad_jefe),
+                         max(ENIGH$edad_jefe),
+                         5))+
+  labs(title = "Diagrama de cajas y bigotes  de la edad del Jefe de familia",
+       subtitle = "",
+       caption = "Elaboracion propia con datos del ENIGH 2020",
+       x="",
+       y="Edad del jefe de familia",
+       color="" , linetype="")+
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), 
+        plot.background = element_rect(fill = "#e0eee0"), 
+        legend.background = element_rect(fill ="#e0eee0"),
+        panel.grid.major = element_line(color="grey"),
+        panel.grid.minor = element_blank(),
+        plot.title = ggtext::element_markdown(hjust=0.5,
+                                              size=18,
+                                              colour="black"),
+        plot.subtitle = ggtext::element_markdown(hjust=0.5,
+                                                 size=16,
+                                                 colour="black"),
+        plot.caption = element_text(hjust=0, size=14,
+                                    colour="black"),
+        text = element_text(family = "Times New Roman"),
+        axis.text = element_text(size=14, colour="black"),
+        axis.ticks = element_blank(),
+        axis.title = element_text(size=14, colour="black"),
+        legend.text = element_text(size=14, colour="black"),
+        legend.title = element_text(size=14, colour="blac k"),
+        legend.key = element_rect(fill = "#e0eee0"),
+        axis.title.x = element_text(size = 16))
+
+
+## Grafica de cajas con factores----
+
+#1 Bajo
+#2 Medio Bajo
+#3 Medio Alto
+#4 Alto
+
+Valores <- c ("Bajo", "Medio Bajo", "Medio Alto", "Alto")
+est_socio <- c(1,2,3,4)
+for(i in 1:4){
+  ENIGH$est_socio[ENIGH$est_socio==est_socio[i]] <- Valores[i]
+}
+
+unique(ENIGH$est_socio)
+
+ENIGH$est_socio <- factor(ENIGH$est_socio,
+                          levels = c ("Bajo", "Medio Bajo", "Medio Alto", "Alto"))
+
+
+
+
+
+ENIGH %>% 
+  ggplot(aes(x=est_socio, y=edad_jefe))+
+  stat_boxplot(geom = "errorbar",
+               width=0.15, #tamaño bigotes
+               color="black")+
+  geom_boxplot(fill="steelblue",
+               alpha=0.5,
+               color="black",
+               outlier.colour = "red",
+               width= 0.5)+ #tamaño de la caja
+  stat_summary(fun = mean , geom = "point",
+               shape=20 , size=3, color="red",fill="red")+#para ver media
+  scale_y_continuous(breaks=seq(min(ENIGH$edad_jefe),
+                                max(ENIGH$edad_jefe),
+                                5))+
+  labs(title = "Diagrama de cajas y bigotes  de la edad del Jefe de familia",
+       subtitle = "Dividido por factor de nivel socioeconomico",
+       caption = "Elaboracion propia con datos del ENIGH 2020",
+       x="",
+       y="Edad del jefe de familia",
+       color="" , linetype="")+
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), 
+        plot.background = element_rect(fill = "#e0eee0"), 
+        legend.background = element_rect(fill ="#e0eee0"),
+        panel.grid.major = element_line(color="grey"),
+        panel.grid.minor = element_blank(),
+        plot.title = ggtext::element_markdown(hjust=0.5,
+                                              size=18,
+                                              colour="black"),
+        plot.subtitle = ggtext::element_markdown(hjust=0.5,
+                                                 size=16,
+                                                 colour="black"),
+        plot.caption = element_text(hjust=0, size=14,
+                                    colour="black"),
+        text = element_text(family = "Times New Roman"),
+        axis.text = element_text(size=14, colour="black"),
+        axis.ticks = element_blank(),
+        axis.title = element_text(size=14, colour="black"),
+        legend.text = element_text(size=14, colour="black"),
+        legend.title = element_text(size=14, colour="blac k"),
+        legend.key = element_rect(fill = "#e0eee0"),
+        axis.title.x = element_text(size = 16))
+
+
+#Grafico de Violin----
+##Grafico Base----
+
+ENIGH %>% 
+  ggplot(aes(x="",y=edad_jefe))+
+  geom_violin()
+
+
+ENIGH %>% 
+  ggplot(aes(x=edad_jefe,y=""))+
+  geom_violin()
+
+##Grafico Final ----
+ENIGH %>% 
+ggplot(aes(x=est_socio, y=edad_jefe))+
+  geom_violin(fill="steelblue",
+               alpha=0.5,
+               color="black",
+               
+               width= 0.5)+ #tamaño de la caja
+  stat_summary(fun = mean , geom = "point",
+               shape=20 , size=3, color="red",fill="red")+#para ver media
+  scale_y_continuous(breaks=seq(min(ENIGH$edad_jefe),
+                                max(ENIGH$edad_jefe),
+                                5))+
+  labs(title = "Diagrama de Violin  de la edad del Jefe de familia",
+       subtitle = "Dividido por factor de nivel socioeconomico",
+       caption = "Elaboracion propia con datos del ENIGH 2020",
+       x="",
+       y="Edad del jefe de familia",
+       color="" , linetype="")+
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), 
+        plot.background = element_rect(fill = "#e0eee0"), 
+        legend.background = element_rect(fill ="#e0eee0"),
+        panel.grid.major = element_line(color="grey"),
+        panel.grid.minor = element_blank(),
+        plot.title = ggtext::element_markdown(hjust=0.5,
+                                              size=18,
+                                              colour="black"),
+        plot.subtitle = ggtext::element_markdown(hjust=0.5,
+                                                 size=16,
+                                                 colour="black"),
+        plot.caption = element_text(hjust=0, size=14,
+                                    colour="black"),
+        text = element_text(family = "Times New Roman"),
+        axis.text = element_text(size=14, colour="black"),
+        axis.ticks = element_blank(),
+        axis.title = element_text(size=14, colour="black"),
+        legend.text = element_text(size=14, colour="black"),
+        legend.title = element_text(size=14, colour="blac k"),
+        legend.key = element_rect(fill = "#e0eee0"),
+        axis.title.x = element_text(size = 16))
+
+
+
+#Graficos de correlacion ----
+
+
+GC <- iris[,1:4] %>%  
+
+  rename(`longitud de tallo` = Sepal.Length,
+          `Ancho de Tallo` = Sepal.Width,
+          `Longitud del petalo` = Petal.Length,
+          `Ancho del Petalo` = Petal.Width) %>% 
+  ggpairs(columns= 1:4,
+          aes(color = Species))+
+  labs(title = "Gráfico de correlacion entre las variables de IRIS",
+      subtitle= "Para todas las especies",
+      caption = "Elaboracion propia")+
+  
+  theme(legend.position = "bottom",
+        panel.background = element_blank(), 
+        plot.background = element_rect(fill = "#e0eee0"), 
+        legend.background = element_rect(fill ="#e0eee0"),
+        panel.grid.major = element_line(color="grey"),
+        panel.grid.minor = element_blank(),
+        plot.title = ggtext::element_markdown(hjust=0.5,
+                                              size=18,
+                                              colour="black"),
+        plot.subtitle = ggtext::element_markdown(hjust=0.5,
+                                                 size=16,
+                                                 colour="black"),
+        plot.caption = element_text(hjust=0, size=14,
+                                    colour="black"),
+        text = element_text(family = "Times New Roman"),
+        axis.text = element_text(size=14, colour="black"),
+        axis.ticks = element_blank(),
+        axis.title = element_text(size=14, colour="black"),
+        legend.text = element_text(size=14, colour="black"),
+        legend.title = element_text(size=14, colour="blac k"),
+        legend.key = element_rect(fill = "#e0eee0"),
+        axis.title.x = element_text(size = 16),
+        strip.text=element_text(size=14,color="white"),
+        strip.background= element_rect(fill="black"))
+
+GC
+
+
+
+iris
+
 
